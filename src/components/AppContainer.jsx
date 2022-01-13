@@ -96,7 +96,7 @@ export default function AppContainer(props) {
   const [family,setFamily] = React.useState(null)
 
   React.useEffect(()=>{
-    axios.get('http://localhost/students.json').then(res =>{
+    axios.get('http://localhost/families.json').then(res =>{
       console.log(res.data)
       setfamilies(res.data)
       setFamily(res.data[0])
