@@ -1,0 +1,49 @@
+[
+    {
+      "id":1,
+      "name":"Family one",
+      "imgs":[
+        "https://images.pexels.com/photos/2253879/pexels-photo-2253879.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+        "https://images.pexels.com/photos/39691/family-pier-man-woman-39691.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+        "https://images.pexels.com/photos/4259140/pexels-photo-4259140.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
+      ],
+      "youtube":"channel link",
+      "facebook":"facebook link",
+      "mobile":"1122334455",
+      "address":"family address",
+      "email":"family1@email.com",
+      "about": "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Esse provident porro quisquam velit fuga, suscipit eligendi labore eveniet distinctio deleniti harum, odit, id totam soluta sunt est voluptates commodi nulla."
+    },
+    {
+      "id":2,
+      "name":"Family two",
+      "imgs":[
+        "https://images.pexels.com/photos/2253879/pexels-photo-2253879.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+        "https://images.pexels.com/photos/39691/family-pier-man-woman-39691.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+        "https://images.pexels.com/photos/4259140/pexels-photo-4259140.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
+      ],
+      "youtube":"channel link",
+      "facebook":"facebook link",
+      "mobile":"5544332211",
+      "address":"family address",
+      "email":"family2@email.com",
+      "about": "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Esse provident porro quisquam velit fuga, suscipit eligendi labore eveniet distinctio deleniti harum, odit, id totam soluta sunt est voluptates commodi nulla."
+    },
+    {
+      "id":3,
+      "name":"Family three",
+      "imgs":[
+        "https://images.pexels.com/photos/2253879/pexels-photo-2253879.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+        "https://images.pexels.com/photos/39691/family-pier-man-woman-39691.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+        "https://images.pexels.com/photos/4259140/pexels-photo-4259140.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
+      ],
+      "youtube":"channel link",
+      "facebook":"facebook link",
+      "mobile":"3344552211",
+      "address":"family address",
+      "email":"family3@email.com",
+      "about": "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Esse provident porro quisquam velit fuga, suscipit eligendi labore eveniet distinctio deleniti harum, odit, id totam soluta sunt est voluptates commodi nulla."
+    }
+  ]
+  
+  
