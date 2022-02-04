@@ -5,7 +5,7 @@ header("Access-Control-Allow-Methods: PUT, GET, POST");
 
 $response = array();
 $upload_dir = 'uploads/';
-$server_url = 'http://127.0.0.1:8888';
+$server_url = 'https://dev.dnshko.in';
 
 if($_FILES['file'])
 {

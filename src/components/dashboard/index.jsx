@@ -35,32 +35,45 @@ const Dashboard = () => {
   const [filedata, setFile] = useState([]);
   const SubmitValue = async () => {
     const data = new FormData();
-
-    for (let i = 0; i < filedata.length; i++) {
-      data.append("file[]", filedata[i]);
-    }
-
-    let url = "http://127.0.0.1:8888/api/upload.php";
-    axios
-      .post(url, data, {})
-      .then((res) => {
-        console.log(res.data);
-        setTimeout(displayHello, 1000, res.data);
-      })
-
-      .catch(
+    if (filedata.length == "") {
+      Swal.fire({
+        title: "Error!",
+        text: "Please upload image files",
+        icon: "error",
+        confirmButtonText: "ok",
+      });
+    } else {
+      if (
+        content !== "" &&
+        FaceBook !== "" &&
+        YouTube !== "" &&
+        ContactInfo !== "" &&
+        email !== "" &&
+        address !== "" &&
+        name !== ""
+      ) {
+        for (let i = 0; i < filedata.length; i++) {
+          data.append("file[]", filedata[i]);
+        }
+        let url = "https://dev.dnshko.in/api/upload.php";
+        axios.post(url, data, {}).then((res) => {
+          console.log(res.data);
+          SavaMyData(res.data);
+        });
+      } else {
         Swal.fire({
           title: "Error!",
-          text: "something wrong",
+          text: "Content is misssing!",
           icon: "error",
           confirmButtonText: "ok",
-        })
-      );
+        });
+      }
+    }
   };
-  const displayHello = (res) => {
+  const SavaMyData = (res) => {
     console.log("dataurl", res);
     axios
-      .post("http://127.0.0.1:8888/api/api.php", {
+      .post("https://dev.dnshko.in/api/api.php", {
         name: name,
         about: content,
         facebook: FaceBook,
@@ -75,14 +88,6 @@ const Dashboard = () => {
           title: "Saved!",
           text: "Data was Saved successfully!",
           icon: "success",
-          confirmButtonText: "ok",
-        })
-      )
-      .catch(
-        Swal.fire({
-          title: "Error!",
-          text: "something wrong",
-          icon: "error",
           confirmButtonText: "ok",
         })
       );
@@ -103,8 +108,8 @@ const Dashboard = () => {
   };
   return (
     <div class="dasboard-container">
-      <Container fixed>
-        <Card sx={{ height: "80vh", margin: "20px" }}>
+      <Container>
+        <Card sx={{ height: "auto", margin: "20px" }}>
           <CardContent>
             <p>About</p>
             <Grid container spacing={2}>
@@ -158,10 +163,10 @@ const Dashboard = () => {
                     onChange={(e) => setName(e.target.value)}
                   />
                   <TextField
-                    fullWidth
+                    multiline
+                    rows={4}
                     id="address"
                     label="address"
-                    variant="outlined"
                     onChange={(e) => setAddress(e.target.value)}
                   />
                   <TextField
