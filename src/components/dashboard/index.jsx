@@ -121,7 +121,11 @@ const Dashboard = () => {
                     change: onChange,
                   }}
                 />
-                <DropzoneArea onChange={handleChange} filesLimit={50} />
+                <DropzoneArea
+                  onChange={handleChange}
+                  filesLimit={50}
+                  acceptedFiles={["image/jpeg", "image/png", "image/bmp"]}
+                />
               </Grid>
               <Grid item xs={4}>
                 <Box
@@ -183,13 +187,9 @@ const Dashboard = () => {
               className="row"
               style={{ justifyContent: "center", marginTop: "15px" }}
             >
-              <Button
-                variant="contained"
-                startIcon={<SaveIcon />}
-                onClick={SubmitValue}
-              >
+              <button className="btn btn-primary" onClick={SubmitValue}>
                 Save
-              </Button>
+              </button>
             </div>
           </CardContent>
         </Card>

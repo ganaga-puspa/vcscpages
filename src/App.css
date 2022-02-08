@@ -1,3 +1,11 @@
 a {
   text-decoration: none;
 }
+
+.MuiDropzoneArea-root {
+  padding: 50px;
+}
+
+.MuiPaper-root {
+  overflow: auto;
+}
