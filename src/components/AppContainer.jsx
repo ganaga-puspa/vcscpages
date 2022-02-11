@@ -152,6 +152,7 @@ export default function AppContainer(props) {
           <FamilyInfo family={family} />
         )}
         <div
+          class="bttn coontainer"
           style={{
             width: "100%",
             height: "100px",
@@ -161,6 +162,7 @@ export default function AppContainer(props) {
           }}
         >
           <Button
+            class="bttnspacing"
             variant="contained"
             color="secondary"
             onClick={() => setRenderPortrait(true)}
