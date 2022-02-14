@@ -3,7 +3,7 @@ import AppContainer from "./components/AppContainer";
 import "./App.css";
 import { Login, Dashboard } from "./components/";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-
+import "@fortawesome/fontawesome-svg-core/styles.css";
 function App() {
   return (
     <div>
