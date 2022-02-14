@@ -145,3 +145,18 @@
   text-align: left;
   font-weight: 400;
 }
+
+.carousel .control-next.control-arrow:before {
+  content: ">" !important;
+  border-left: 0px solid #fff !important;
+}
+.carousel.carousel-slider .control-arrow:hover {
+  background: none !important;
+}
+.carousel .control-prev.control-arrow:before {
+  content: "<" !important;
+  border-right: 0px solid #fff !important;
+}
+.carousel.carousel-slider .control-arrow {
+  font-size: 55px !important;
+}
