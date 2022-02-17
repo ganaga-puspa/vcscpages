@@ -151,22 +151,7 @@ const Dashboard = () => {
               <Tab label="JSON" />
             </Tabs>
             <TabPanel value={tabvalue} index={0}>
-              <p>About</p>
               <Grid container spacing={2}>
-                <Grid item xs={7}>
-                  <CKEditor
-                    activeClass="p10"
-                    content={content}
-                    events={{
-                      change: onChange,
-                    }}
-                  />
-                  <DropzoneArea
-                    onChange={handleChange}
-                    filesLimit={50}
-                    acceptedFiles={["image/jpeg", "image/png", "image/bmp"]}
-                  />
-                </Grid>
                 <Grid item xs={4}>
                   <Box
                     sx={{
@@ -202,7 +187,7 @@ const Dashboard = () => {
                     <TextField
                       fullWidth
                       id="name"
-                      label="name"
+                      label="Name"
                       variant="outlined"
                       onChange={(e) => setName(e.target.value)}
                     />
@@ -210,17 +195,32 @@ const Dashboard = () => {
                       multiline
                       rows={4}
                       id="address"
-                      label="address"
+                      label="Address"
                       onChange={(e) => setAddress(e.target.value)}
                     />
                     <TextField
                       fullWidth
                       id="email"
-                      label="email"
+                      label="Email"
                       variant="outlined"
                       onChange={(e) => setEmail(e.target.value)}
                     />
                   </Box>
+                </Grid>
+                <Grid item xs={7}>
+                  <p>About</p>
+                  <CKEditor
+                    activeClass="p10"
+                    content={content}
+                    events={{
+                      change: onChange,
+                    }}
+                  />
+                  <DropzoneArea
+                    onChange={handleChange}
+                    filesLimit={50}
+                    acceptedFiles={["image/jpeg", "image/png", "image/bmp"]}
+                  />
                 </Grid>
               </Grid>
 

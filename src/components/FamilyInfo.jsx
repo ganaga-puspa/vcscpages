@@ -20,29 +20,30 @@ function FamilyInfo({ family }) {
             </Paper>
           </Box>
         </Container>
-        <h3 class="texts">
-          <i class="fa-brands fa-facebook-square"></i>Facebook:{" "}
-          <a
-            target="_blank"
-            rel="noreferrer"
-            href={`${family && family.facebook}`}
-          >
-            {family && family.facebook}
-          </a>
-        </h3>
-        <h3 class="texts">
-          <i class="fa-brands fa-youtube-square"></i>Youtube :{" "}
-          <a
-            target="_blank"
-            rel="noreferrer"
-            href={`${family && family.youtube}`}
-          >
-            {family && family.youtube}
-          </a>
-        </h3>
-        <h2 class="texts">Contact Info</h2>
+
         <Container class="boox2">
           <Paper elevation={2} sx={{ p: 2 }}>
+            <h6 class="texts">
+              <i class="fa-brands fa-facebook-square"></i>Facebook:{" "}
+              <a
+                target="_blank"
+                rel="noreferrer"
+                href={`${family && family.facebook}`}
+              >
+                {family && family.facebook}
+              </a>
+            </h6>
+            <h6 class="texts">
+              <i class="fa-brands fa-youtube-square"></i>Youtube :{" "}
+              <a
+                target="_blank"
+                rel="noreferrer"
+                href={`${family && family.youtube}`}
+              >
+                {family && family.youtube}
+              </a>
+            </h6>
+            <h2 class="texts">Contact Info:</h2>
             <h3 class="mob">
               Mobile :{" "}
               <a href={`tel://${family && family.mobile}`}>
@@ -51,15 +52,15 @@ function FamilyInfo({ family }) {
                 </Button>
               </a>
             </h3>
-            <h3 class="emal">
+            <h6 class="emal">
               Email :{" "}
               <a href={`mailto:${family && family.email}`}>
                 <Button startIcon={<MailIcon />} variant="outlined">
                   Drop a Mail
                 </Button>
               </a>
-            </h3>
-            <h3 class="reaach">Reach out us :</h3>
+            </h6>
+            <h6 class="reaach">Reach out us :</h6>
             <Container>
               <h5 class="reaachpara">{family && family.address}</h5>
             </Container>

@@ -13,7 +13,7 @@
 }
 .texts {
   font-family: "poppins", sans-serif;
-  font-size: 30px;
+  font-size: 15px;
   font-weight: 600;
   color: #000000;
   text-align: left;
@@ -21,7 +21,7 @@
 }
 .texts a {
   font-family: "poppins", sans-serif;
-  font-size: 23px;
+  font-size: 15px;
   font-weight: 400;
 }
 .boox2 {
@@ -120,12 +120,12 @@
 }
 .mob {
   font-family: "Poppins";
-  font-size: 25px;
+  font-size: 15px;
   padding-bottom: 14px;
 }
 .emal {
   font-family: "Poppins";
-  font-size: 25px;
+  font-size: 15px;
   padding-bottom: 14px;
 }
 .emal a {
@@ -133,7 +133,7 @@
 }
 .reaach {
   font-family: "Poppins";
-  font-size: 25px;
+  font-size: 15px;
   font-weight: 600;
   padding-bottom: 14px;
 }

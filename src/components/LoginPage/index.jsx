@@ -1,15 +1,25 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
+import AuthContext from "../../useAuth";
+
 const Login = () => {
   let navigate = useNavigate();
+  const authCtx = useContext(AuthContext);
+
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const FormSumbit = (e) => {
+  const FormSumbit = async (e) => {
     e.preventDefault();
-    if (username === "admin@gmail.com" && password === "admin") {
-      navigate("/dashboard");
+    if (
+      username === "velankannisocal1@gmail.com" &&
+      password === "Velankanni#12"
+    ) {
+      const expirationTime = new Date(new Date().getTime() + +1000 * 1000);
+      authCtx.loginn(username, expirationTime.toISOString());
+      navigate("/Velankanni-dashboard");
     } else {
-      console.log("not ok");
+      Swal.fire("Error!", "please enter a valid email and password!", "error");
     }
   };
   return (

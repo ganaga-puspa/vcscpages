@@ -9,7 +9,7 @@ class User{
 
     private $ids = [];
 
-    private $mobiles = [];
+    private $names = [];
     
     public function __construct($file_path){
         $this->json_file = $file_path;
@@ -21,7 +21,7 @@ class User{
         if($this->number_of_records != 0){
             foreach($this->stored_data as $user){
                 array_push($this->ids, $user['id']);
-                array_push($this->mobiles, $user['mobile']);
+                array_push($this->names, $user['name']);
 
             }
         }
@@ -51,7 +51,7 @@ class User{
         if($this->number_of_records == ''){
             $this->storeData();
         }else{
-            if(!in_array($new_user['mobile'],$this->mobiles)){
+            if(!in_array($new_user['name'],$this->names)){
                 $this->storeData();
             }
         }
