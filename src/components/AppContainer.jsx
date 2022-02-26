@@ -21,6 +21,19 @@ import axios from "axios";
 import FamilyPortrait from "./FamilyPortrait";
 import FamilyInfo from "./FamilyInfo";
 import Button from "@mui/material/Button";
+import { storage, db } from "../firebase";
+import {
+  collection,
+  doc,
+  setDoc,
+  getDoc,
+  onSnapshot,
+  deleteDoc,
+  serverTimestamp,
+  query,
+  orderBy,
+  updateDoc,
+} from "firebase/firestore";
 const drawerWidth = 240;
 
 const openedMixin = (theme) => ({
@@ -96,11 +109,21 @@ export default function AppContainer(props) {
   const [family, setFamily] = React.useState(null);
 
   React.useEffect(() => {
-    axios.get("https://dev.dnshko.in/api/users.json").then((res) => {
-      console.log(res.data);
-      setfamilies(res.data);
-      setFamily(res.data[0]);
+    const famRef = collection(db, "Family");
+    onSnapshot(famRef, (snapshot) => {
+      let famdata = [];
+      snapshot.docs.forEach((doc) => {
+        famdata.push({ ...doc.data(), id: doc.id });
+      });
+      console.log("userdata", famdata);
+      setfamilies(famdata);
+      setFamily(famdata[0]);
     });
+    // axios.get("https://dev.dnshko.in/api/users.json").then((res) => {
+    //   console.log(res.data);
+    //   setfamilies(res.data);
+    //   setFamily(res.data[0]);
+    // });
   }, []);
 
   // const handleDrawerOpen = () => {
