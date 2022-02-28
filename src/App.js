@@ -4,6 +4,7 @@ import "./App.css";
 import { Login, Dashboard } from "./components/";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import AuthContext from "./useAuth";
+import UploadImage from "./ImageUpload/UploadImage";
 
 function RequireAuth({ children }) {
   const authCtx = useContext(AuthContext);
@@ -30,6 +31,8 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<AppContainer />} />
+          <Route path="/i" element={<UploadImage />} />
+
           <Route path="/Velankanni-admin" element={<Alrlogin />} />
           <Route
             path="/Velankanni-dashboard"

@@ -45,6 +45,7 @@ import {
   uploadBytesResumable,
   getDownloadURL,
 } from "firebase/storage";
+import LinearProgress from "@mui/material/LinearProgress";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -83,6 +84,11 @@ const Dashboard = () => {
   const [progress, setProgress] = useState(0);
   const [check, setCheck] = useState("");
   const [data, setData] = useState("");
+  const [filedatas, setfiledata] = useState("");
+  const [selectedImages, setSelectedImages] = useState([]);
+  const [images, setImages] = useState([]);
+  const [urls, setUrls] = useState([]);
+  const [ImageId, setImageId] = useState(0);
   // const [active, setActive] = useState(false);
 
   const SubmitValue = async () => {
@@ -122,7 +128,7 @@ const Dashboard = () => {
       }
     }
   };
-  const SavaMyData = () => {
+  const SavaMyData = (imgurl) => {
     // console.log("dataurl", res);
     db.collection("Family")
       .add({
@@ -133,6 +139,7 @@ const Dashboard = () => {
         mobile: ContactInfo,
         email: email,
         address: address,
+        img: imgurl,
         // imgs: res,
       })
       .then(
@@ -143,44 +150,6 @@ const Dashboard = () => {
           confirmButtonText: "ok",
         })
       );
-  };
-
-  const uploadFiles = () => {
-    // const data = new FormData();
-    // for (let i = 0; i < filedata.length; i++) {
-    //   data.append("file[]", filedata[i]);
-    // }
-    const metadata = {
-      contentType: "image/jpg",
-    };
-    // if (!data) return;
-    const storageRef = ref(storage, "images/" + `${filedata.name}`);
-    const uploadTask = uploadBytesResumable(storageRef, filedata, metadata);
-
-    uploadTask.on(
-      "state_changed",
-      (snapshot) => {
-        const prog = Math.round(
-          (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-        );
-        setProgress(prog);
-      },
-      (error) => console.log(error),
-      () => {
-        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-          // setdownloadURL(downloadURL);
-
-          Swal.fire({
-            icon: "success",
-            title: "UPLOADED SUCCESS",
-            confirmButtonText: "Save",
-            // footer: `<a href=${downloadURL} target="_blank">View the File</a>`,
-          }).then((result) => {
-            console.log("result", result);
-          });
-        });
-      }
-    );
   };
 
   const onChangeSelect = (evt) => {
@@ -203,7 +172,7 @@ const Dashboard = () => {
       setAddress(select.address);
       setContactInfo(select.mobile);
       // setActive(true);
-      console.log("select", select);
+      // console.log("select", select);
     }
   };
   const deleteFamily = () => {
@@ -305,7 +274,7 @@ const Dashboard = () => {
       snapshot.docs.forEach((doc) => {
         famdata.push({ ...doc.data(), id: doc.id });
       });
-      console.log("userdata", famdata);
+      // console.log("userdata", famdata);
       setfamilies(famdata);
       setFamily(famdata);
       // setCheck(q);
@@ -325,26 +294,57 @@ const Dashboard = () => {
     // console.log("check", q);
   };
 
-  console.log("FamNameId", FamNameId);
-  console.log("FamName", FamName);
+  const handleChangeImage = (files) => {
+    for (let i = 0; i < files.length; i++) {
+      const newImage = files[i];
+      newImage["id"] = Math.random();
+      setImages((prevState) => [...prevState, newImage]);
+      console.log("i", i);
+      setImageId(i);
+    }
+  };
 
-  console.log("famData", famData);
+  const handleUpload = () => {
+    const promises = [];
+    const famImages = [];
 
-  // const EditUSers = (famData) => {
-  //   const userid = famData.map((d) => {
-  //     return d.id;
-  //   });
-  //   setUserID(userid[0]);
-  // };
-
-  // console.log("userID", userID);
-
-  // React.useEffect(() => {
-  //   axios.get("https://dev.dnshko.in/api/users.json").then((res) => {
-  //     console.log(res.data);
-  //     setfamilies(res.data);
-  //   });
-  // }, []);
+    images.map((image, index) => {
+      const storageRef = ref(storage, "images/" + `${image.name}`);
+      const uploadTask = uploadBytesResumable(storageRef, image);
+      //   const uploadTask = storage.ref(`images/${image.name}`).put(image);
+      // promises.push(uploadTask);
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {
+          const progress = Math.round(
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+          );
+          setProgress(progress);
+        },
+        (error) => console.log(error),
+        async () => {
+          await getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+            famImages.push({ ...downloadURL, downloadURL });
+            // setUrls((prevState) => [...prevState, downloadURL]);
+            index === ImageId
+              ? SavaMyData(famImages)
+              : console.log(`no index is ${index} and length is ${ImageId}`);
+          });
+          // .then(await SavaMyData());
+          // storage
+          //   .ref("images")
+          //   .child(image.name)
+          //   .getDownloadURL()
+          //   .then((urls) => {
+          //     setUrls((prevState) => [...prevState, urls]);
+          //   });
+        }
+      );
+    });
+    // SavaMyData();
+  };
+  // console.log("images: ", images);
+  // console.log("urls", urls);
 
   return (
     <div class="dasboard-container">
@@ -460,11 +460,20 @@ const Dashboard = () => {
                       change: onChange,
                     }}
                   />
+                  <br />
+                  {/* <input type="file" multiple onChange={handleChangeImage} /> */}
+
                   <DropzoneArea
-                    onChange={handleChange}
-                    filesLimit={50}
-                    acceptedFiles={["image/jpeg", "image/png", "image/bmp"]}
+                    onChange={handleChangeImage}
+                    // filesLimit={50}
+                    // acceptedFiles={["image/jpeg", "image/png", "image/bmp"]}
                   />
+                  <br></br>
+                  <h5 style={{ color: "#f73164", fontStyle: "italic" }}>
+                    Uploading {progress}%
+                  </h5>
+                  <LinearProgress variant="determinate" value={progress} />
+                  <br></br>
                 </Grid>
               </Grid>
               {/* {famData === "Add new family" ? (
@@ -479,16 +488,15 @@ const Dashboard = () => {
                 className="row"
                 style={{ justifyContent: "center", marginTop: "15px" }}
               >
-                {/* {family.map((f) => {
-                  return (
-                    <div>
-                     
-                    </div>
-                  );
-                })} */}
-                {/* {family.map((f) => (
-                  
-                ))} */}
+                <button onClick={handleUpload}>Upload</button>
+                {/* <button
+                  className="btn btn-primary"
+                  onClick={handleUpload}
+                  // disabled={active}
+                >
+                  Image
+                </button> */}
+                &nbsp;
                 <button
                   className="btn btn-primary"
                   onClick={deleteFamily}

@@ -31,6 +31,7 @@ const firebaseConfig = {
 // const analytics = getAnalytics(app);
 
 const firebaseApp = initializeApp(firebaseConfig);
+// const storageRef = firebase.storage().ref();
 // export default app;
 firebase.initializeApp(firebaseConfig);
 var auth = firebase.auth();

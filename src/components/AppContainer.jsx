@@ -103,7 +103,7 @@ const Drawer = styled(MuiDrawer, {
 
 export default function AppContainer(props) {
   // const theme = useTheme();
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = React.useState(true);
   const [families, setfamilies] = React.useState([]);
   const [renderPortrait, setRenderPortrait] = React.useState(false);
   const [family, setFamily] = React.useState(null);
@@ -118,6 +118,7 @@ export default function AppContainer(props) {
       console.log("userdata", famdata);
       setfamilies(famdata);
       setFamily(famdata[0]);
+      // setOpen(open);
     });
     // axios.get("https://dev.dnshko.in/api/users.json").then((res) => {
     //   console.log(res.data);
