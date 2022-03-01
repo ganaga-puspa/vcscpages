@@ -48,7 +48,7 @@ function FamilyInfo({ family }) {
               Mobile :{" "}
               <a href={`tel://${family && family.mobile}`}>
                 <Button startIcon={<CallIcon />} variant="outlined">
-                  Give a Call
+                  {family && family.mobile}
                 </Button>
               </a>
             </h3>
@@ -56,7 +56,7 @@ function FamilyInfo({ family }) {
               Email :{" "}
               <a href={`mailto:${family && family.email}`}>
                 <Button startIcon={<MailIcon />} variant="outlined">
-                  Drop a Mail
+                  {family && family.email}
                 </Button>
               </a>
             </h6>

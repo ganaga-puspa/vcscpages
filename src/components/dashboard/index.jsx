@@ -23,7 +23,7 @@ import Swal from "sweetalert2";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import ReactJson from "react-json-view";
-
+import { CircularProgress } from "@mui/material";
 import { storage, db } from "../../firebase";
 import {
   collection,
@@ -90,7 +90,7 @@ const Dashboard = () => {
   const [images, setImages] = useState([]);
   const [urls, setUrls] = useState([]);
   const [ImageId, setImageId] = useState(0);
-  // const [active, setActive] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const SubmitValue = async () => {
     const data = new FormData();
@@ -130,6 +130,7 @@ const Dashboard = () => {
     }
   };
   const SavaMyData = async () => {
+    setLoading(true)
     const docRef = await addDoc(collection(db,'Family'),{
                     name: name,
                     about: content,
@@ -141,31 +142,23 @@ const Dashboard = () => {
                     img: [],
                   })
     handleUpload(docRef.id)
-    // db.collection("Family")
-    //   .add({
-       
-    //     // imgs: res,
-    //   })
-    //   .then(
-    //     // Swal.fire({
-    //     //   title: "Saved!",
-    //     //   text: "Data was Saved successfully!",
-    //     //   icon: "success",
-    //     //   confirmButtonText: "ok",
-    //     // })
-    //   );
+    
   };
+
+  const clearState = () =>{
+    setName("");
+    setEmail("");
+    setContent("");
+    setFaceBook("");
+    setYouTube("");
+    setAddress("");
+    setContactInfo("");
+  }
 
   const onChangeSelect = (evt) => {
     setFamData(evt.target.value);
     if (evt.target.value === "AddNewFamily") {
-      setName("");
-      setEmail("");
-      setContent("");
-      setFaceBook("");
-      setYouTube("");
-      setAddress("");
-      setContactInfo("");
+      clearState()
     } else {
       const select = family.find((test) => test.id === evt.target.value);
       setName(select.name);
@@ -196,6 +189,8 @@ const Dashboard = () => {
         confirmButtonColor: "#3085d6",
         cancelButtonColor: "#d33",
         confirmButtonText: "Yes, delete it!",
+        allowEscapeKey:false,
+        allowOutsideClick:false,
       }).then((result) => {
         if (result.isConfirmed) {
           deleteDoc(doc(db, "Family", Familyid));
@@ -203,13 +198,7 @@ const Dashboard = () => {
           console.log("Delete");
           Swal.fire("Deleted!", "Your file has been deleted.", "success");
         }
-        setName("");
-        setEmail("");
-        setContent("");
-        setFaceBook("");
-        setYouTube("");
-        setAddress("");
-        setContactInfo("");
+        clearState()
       });
     }
   };
@@ -222,6 +211,8 @@ const Dashboard = () => {
         confirmButtonText: "OK",
       });
     } else {
+      const found = family.find(fam => fam.id === famData)
+      const {img} = found
       const Familyid = famData;
       await updateDoc(doc(db, "Family", Familyid), {
         name: name,
@@ -231,22 +222,14 @@ const Dashboard = () => {
         mobile: ContactInfo,
         email: email,
         address: address,
-        // FaceBook,
-        // YouTube,
-        // address,
-        // ContactInfo,
+        img: [...img],
       }).then(
         Swal.fire({
           icon: "success",
           title: "UPDATE SUCCESS",
           confirmButtonText: "Done",
         })
-        //  .then((result) => {
-        //    setShow(false);
-        //    setNewstitle(""), setContent(""), setfiles("");
-        //    setfileName("");
-        //    seteditid(false);
-        //  })
+        .then(()=>clearState())
       );
     }
   };
@@ -254,16 +237,6 @@ const Dashboard = () => {
   const onChange = (evt) => {
     var newContent = evt.editor.getData();
     setContent(newContent);
-  };
-  const onChangeImg = (event) => {
-    setFile(event.target.files);
-    setFile({
-      selectedFile: event.target.files,
-      responseArray: [],
-    });
-  };
-  const handleChange = (files) => {
-    setFile(files);
   };
 
   const handleTabChange = (event, newValue) => {
@@ -287,17 +260,6 @@ const Dashboard = () => {
     });
   }, []);
 
-  const FamName = family.map((test) => test.name);
-  const FamNameId = family.map((test) => test.id);
-
-  const DataFilter = (id) => {
-    famData === FamName[0] ? console.log("Haha") : console.log("OOOO");
-    // const famRef = collection(db, "Family");
-
-    // const q = query(famRef, where("name", "===", `${famData}`));
-    // console.log("check", q);
-  };
-
   const handleChangeImage = (files) => {
     // for (let i = 0; i < files.length; i++) {
     //   const newImage = files[i];
@@ -311,15 +273,15 @@ const Dashboard = () => {
 
   const handleUpload = async (id) => {
   
-    const promises = [];
+    
+    const uploadPromises = []
 
     images.map((image, index) => {
       const storageRef = ref(storage, "images/" + `${image.name}`);
       const uploadTask = uploadBytesResumable(storageRef, image);
-      const downloader = getDownloadURL(ref(storage, `images/${image.name}`))
-      promises.push(downloader)
+      
       //   const uploadTask = storage.ref(`images/${image.name}`).put(image);
-      // promises.push(uploadTask);
+      uploadPromises.push(uploadTask);
       uploadTask.on(
         "state_changed",
         (snapshot) => {
@@ -331,7 +293,14 @@ const Dashboard = () => {
         (error) => console.log(error),
       );
     });
-    Promise.all(promises)
+    Promise.all(uploadPromises)
+    .then(res =>{
+      const promises = [];
+      images.map(image =>{
+        const downloader = getDownloadURL(ref(storage, `images/${image.name}`))
+        promises.push(downloader)
+      })
+      Promise.all(promises)
       .then(async(res) => {
         await updateDoc(doc(db, "Family", id),{
           img:res,
@@ -342,8 +311,18 @@ const Dashboard = () => {
           icon: "success",
           confirmButtonText: "ok",
         })
+        .then(()=>{
+          setLoading(false)
+          clearState()
+        })
+        setLoading(false)
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        console.log(err)
+        setLoading(false)
+      });
+    })
+   
   };
   // // console.log("images: ", images);
   // // console.log("urls", urls);
@@ -471,11 +450,14 @@ const Dashboard = () => {
                     // acceptedFiles={["image/jpeg", "image/png", "image/bmp"]}
                   />
                   <br></br>
-                  {/* <h5 style={{ color: "#f73164", fontStyle: "italic" }}>
+                  {progress !== 0 && <>
+                  <h5 style={{ color: "#f73164", fontStyle: "italic" }}>
                     Uploading {progress}%
                   </h5>
                   <LinearProgress variant="determinate" value={progress} />
-                  <br></br> */}
+                  <br></br>
+                  </>}
+                  
                 </Grid>
               </Grid>
               {/* {famData === "Add new family" ? (
@@ -490,32 +472,34 @@ const Dashboard = () => {
                 className="row"
                 style={{ justifyContent: "center", marginTop: "15px" }}
               >
-                <button onClick={handleUpload}>Upload</button>
-                {/* <button
+                {/* <button onClick={handleUpload}>Upload</button>
+                <button
                   className="btn btn-primary"
                   onClick={handleUpload}
                   // disabled={active}
                 >
                   Image
                 </button> */}
+                {famData === "AddNewFamily" ? (
+                  <button className="btn btn-primary" disabled={loading} onClick={SavaMyData}>
+                    {loading?<CircularProgress size={24}/>:"Save"}
+                  </button>
+                ) : null}
+                &nbsp;
+                <button className="btn btn-primary" onClick={editFamily}>
+                  Update
+                </button>
                 &nbsp;
                 <button
-                  className="btn btn-primary"
+                  className="btn btn-danger"
                   onClick={deleteFamily}
                   // disabled={active}
                 >
                   Delete
                 </button>
                 &nbsp;
-                <button className="btn btn-primary" onClick={editFamily}>
-                  Update
-                </button>
-                &nbsp;
-                {famData === "AddNewFamily" ? (
-                  <button className="btn btn-primary" onClick={SavaMyData}>
-                    Save
-                  </button>
-                ) : null}
+                
+                
               </div>
             </TabPanel>
             <TabPanel value={tabvalue} index={1}>
