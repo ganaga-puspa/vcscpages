@@ -37,6 +37,7 @@ import {
   orderBy,
   updateDoc,
   where,
+  addDoc,
 } from "firebase/firestore";
 import {
   ref,
@@ -79,7 +80,7 @@ const Dashboard = () => {
   const [tabvalue, setTabValue] = useState(0);
   const [families, setfamilies] = React.useState([]);
   const [family, setFamily] = React.useState([{}]);
-  const [famData, setFamData] = useState("");
+  const [famData, setFamData] = useState("AddNewFamily");
   const [userID, setUserID] = useState("");
   const [progress, setProgress] = useState(0);
   const [check, setCheck] = useState("");
@@ -128,28 +129,31 @@ const Dashboard = () => {
       }
     }
   };
-  const SavaMyData = (imgurl) => {
-    // console.log("dataurl", res);
-    db.collection("Family")
-      .add({
-        name: name,
-        about: content,
-        facebook: FaceBook,
-        youtube: YouTube,
-        mobile: ContactInfo,
-        email: email,
-        address: address,
-        img: imgurl,
-        // imgs: res,
-      })
-      .then(
-        Swal.fire({
-          title: "Saved!",
-          text: "Data was Saved successfully!",
-          icon: "success",
-          confirmButtonText: "ok",
-        })
-      );
+  const SavaMyData = async () => {
+    const docRef = await addDoc(collection(db,'Family'),{
+                    name: name,
+                    about: content,
+                    facebook: FaceBook,
+                    youtube: YouTube,
+                    mobile: ContactInfo,
+                    email: email,
+                    address: address,
+                    img: [],
+                  })
+    handleUpload(docRef.id)
+    // db.collection("Family")
+    //   .add({
+       
+    //     // imgs: res,
+    //   })
+    //   .then(
+    //     // Swal.fire({
+    //     //   title: "Saved!",
+    //     //   text: "Data was Saved successfully!",
+    //     //   icon: "success",
+    //     //   confirmButtonText: "ok",
+    //     // })
+    //   );
   };
 
   const onChangeSelect = (evt) => {
@@ -295,22 +299,25 @@ const Dashboard = () => {
   };
 
   const handleChangeImage = (files) => {
-    for (let i = 0; i < files.length; i++) {
-      const newImage = files[i];
-      newImage["id"] = Math.random();
-      setImages((prevState) => [...prevState, newImage]);
-      console.log("i", i);
-      setImageId(i);
-    }
+    // for (let i = 0; i < files.length; i++) {
+    //   const newImage = files[i];
+    //   newImage["id"] = Math.random();
+    //   setImages((prevState) => [...prevState, newImage]);
+    //   console.log("i", i);
+    //   setImageId(i);
+    // }
+    setImages(files)
   };
 
-  const handleUpload = () => {
+  const handleUpload = async (id) => {
+  
     const promises = [];
-    const famImages = [];
 
     images.map((image, index) => {
       const storageRef = ref(storage, "images/" + `${image.name}`);
       const uploadTask = uploadBytesResumable(storageRef, image);
+      const downloader = getDownloadURL(ref(storage, `images/${image.name}`))
+      promises.push(downloader)
       //   const uploadTask = storage.ref(`images/${image.name}`).put(image);
       // promises.push(uploadTask);
       uploadTask.on(
@@ -322,29 +329,24 @@ const Dashboard = () => {
           setProgress(progress);
         },
         (error) => console.log(error),
-        async () => {
-          await getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-            famImages.push({ ...downloadURL, downloadURL });
-            // setUrls((prevState) => [...prevState, downloadURL]);
-            index === ImageId
-              ? SavaMyData(famImages)
-              : console.log(`no index is ${index} and length is ${ImageId}`);
-          });
-          // .then(await SavaMyData());
-          // storage
-          //   .ref("images")
-          //   .child(image.name)
-          //   .getDownloadURL()
-          //   .then((urls) => {
-          //     setUrls((prevState) => [...prevState, urls]);
-          //   });
-        }
       );
     });
-    // SavaMyData();
+    Promise.all(promises)
+      .then(async(res) => {
+        await updateDoc(doc(db, "Family", id),{
+          img:res,
+        })
+        Swal.fire({
+          title: "Saved!",
+          text: "Data was Saved successfully!",
+          icon: "success",
+          confirmButtonText: "ok",
+        })
+      })
+      .catch((err) => console.log(err));
   };
-  // console.log("images: ", images);
-  // console.log("urls", urls);
+  // // console.log("images: ", images);
+  // // console.log("urls", urls);
 
   return (
     <div class="dasboard-container">
@@ -469,11 +471,11 @@ const Dashboard = () => {
                     // acceptedFiles={["image/jpeg", "image/png", "image/bmp"]}
                   />
                   <br></br>
-                  <h5 style={{ color: "#f73164", fontStyle: "italic" }}>
+                  {/* <h5 style={{ color: "#f73164", fontStyle: "italic" }}>
                     Uploading {progress}%
                   </h5>
                   <LinearProgress variant="determinate" value={progress} />
-                  <br></br>
+                  <br></br> */}
                 </Grid>
               </Grid>
               {/* {famData === "Add new family" ? (

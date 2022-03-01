@@ -19,9 +19,9 @@ function FamilyPortrait({ family }) {
         transitionTime="500"
       >
         {family &&
-          family.imgs.map((img) => (
+          family.img.map((img) => (
             <div>
-              <img src={img.url} />
+              <img src={img} />
             </div>
           ))}
       </Carousel>
