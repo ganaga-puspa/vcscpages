@@ -210,7 +210,7 @@ const Dashboard = () => {
     }
   };
 
-  const editFamily = async () => {
+  const editFamily = async (imgurl) => {
     if (famData === "AddNewFamily") {
       Swal.fire({
         icon: "error",
@@ -227,6 +227,8 @@ const Dashboard = () => {
         mobile: ContactInfo,
         email: email,
         address: address,
+        img: imgurl,
+
         // FaceBook,
         // YouTube,
         // address,
@@ -304,7 +306,7 @@ const Dashboard = () => {
     }
   };
 
-  const handleUpload = () => {
+  const handleEdit = () => {
     const promises = [];
     const famImages = [];
 
@@ -325,6 +327,46 @@ const Dashboard = () => {
         async () => {
           await getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
             famImages.push({ ...downloadURL, downloadURL });
+            // setUrls((prevState) => [...prevState, downloadURL]);
+            index === ImageId
+              ? editFamily(famImages)
+              : console.log(`no index is ${index} and length is ${ImageId}`);
+          });
+          // .then(await SavaMyData());
+          // storage
+          //   .ref("images")
+          //   .child(image.name)
+          //   .getDownloadURL()
+          //   .then((urls) => {
+          //     setUrls((prevState) => [...prevState, urls]);
+          //   });
+        }
+      );
+    });
+    // SavaMyData();
+  };
+
+  const handleUpload = () => {
+    const promises = [];
+    const famImages = [];
+
+    images.map((image, index) => {
+      const storageRef = ref(storage, "images/" + `${image.name}`);
+      const uploadTask = uploadBytesResumable(storageRef, image);
+      //   const uploadTask = storage.ref(`images/${image.name}`).put(image);
+      // promises.push(uploadTask);
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {
+          const progress = Math.round(
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+          );
+          setProgress(progress);
+        },
+        (error) => console.log(error),
+        async () => {
+          await getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+            famImages.push((prevState) => [...prevState, downloadURL]);
             // setUrls((prevState) => [...prevState, downloadURL]);
             index === ImageId
               ? SavaMyData(famImages)
@@ -505,7 +547,7 @@ const Dashboard = () => {
                   Delete
                 </button>
                 &nbsp;
-                <button className="btn btn-primary" onClick={editFamily}>
+                <button className="btn btn-primary" onClick={handleEdit}>
                   Update
                 </button>
                 &nbsp;
