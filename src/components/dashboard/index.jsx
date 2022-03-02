@@ -23,7 +23,7 @@ import Swal from "sweetalert2";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import ReactJson from "react-json-view";
-import { CircularProgress } from "@mui/material";
+import { CircularProgress, IconButton } from "@mui/material";
 import { storage, db } from "../../firebase";
 import {
   collection,
@@ -47,6 +47,7 @@ import {
   getDownloadURL,
 } from "firebase/storage";
 import LinearProgress from "@mui/material/LinearProgress";
+import { Delete } from "@mui/icons-material";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -81,15 +82,9 @@ const Dashboard = () => {
   const [families, setfamilies] = React.useState([]);
   const [family, setFamily] = React.useState([{}]);
   const [famData, setFamData] = useState("AddNewFamily");
-  const [userID, setUserID] = useState("");
   const [progress, setProgress] = useState(0);
-  const [check, setCheck] = useState("");
-  const [data, setData] = useState("");
-  const [filedatas, setfiledata] = useState("");
-  const [selectedImages, setSelectedImages] = useState([]);
   const [images, setImages] = useState([]);
   const [urls, setUrls] = useState([]);
-  const [ImageId, setImageId] = useState(0);
   const [loading, setLoading] = useState(false);
 
   const SubmitValue = async () => {
@@ -130,6 +125,18 @@ const Dashboard = () => {
     }
   };
   const SavaMyData = async () => {
+    
+    if (
+      content === "" ||
+      FaceBook === "" ||
+      YouTube === "" ||
+      ContactInfo === "" ||
+      email === "" ||
+      address === "" ||
+      name === ""
+    ){
+      return Swal.fire('Oops!','Please Fillout All fields','error')
+    }
     setLoading(true)
     const docRef = await addDoc(collection(db,'Family'),{
                     name: name,
@@ -141,7 +148,7 @@ const Dashboard = () => {
                     address: address,
                     img: [],
                   })
-    handleUpload(docRef.id)
+    handleUpload(docRef.id,[])
     
   };
 
@@ -153,6 +160,8 @@ const Dashboard = () => {
     setYouTube("");
     setAddress("");
     setContactInfo("");
+    setUrls([])
+    setFamData('AddNewFamily')
   }
 
   const onChangeSelect = (evt) => {
@@ -168,6 +177,8 @@ const Dashboard = () => {
       setYouTube(select.youtube);
       setAddress(select.address);
       setContactInfo(select.mobile);
+      setUrls(select.img)
+      setImages([])
       // setActive(true);
       // console.log("select", select);
     }
@@ -223,13 +234,9 @@ const Dashboard = () => {
         email: email,
         address: address,
         img: [...img],
-      }).then(
-        Swal.fire({
-          icon: "success",
-          title: "UPDATE SUCCESS",
-          confirmButtonText: "Done",
-        })
-        .then(()=>clearState())
+      }).then(()=>{
+          handleUpload(Familyid,img)
+      }
       );
     }
   };
@@ -271,8 +278,13 @@ const Dashboard = () => {
     setImages(files)
   };
 
-  const handleUpload = async (id) => {
+  const handleUpload = async (id,oldimgs) => {
   
+    if(images.length===0){
+      setLoading(false)
+      clearState()
+      return Swal.fire('Success!',"Data Saved SuccesFully",'success')
+    }
     
     const uploadPromises = []
 
@@ -303,7 +315,7 @@ const Dashboard = () => {
       Promise.all(promises)
       .then(async(res) => {
         await updateDoc(doc(db, "Family", id),{
-          img:res,
+          img:[...oldimgs,...res],
         })
         Swal.fire({
           title: "Saved!",
@@ -324,6 +336,14 @@ const Dashboard = () => {
     })
    
   };
+
+  const delImage = async (url) => {
+    const removed = urls.filter(img => img !== url)
+    setUrls(removed)
+    await updateDoc(doc(db, "Family", famData),{
+      img:removed
+    })
+  }
   // // console.log("images: ", images);
   // // console.log("urls", urls);
 
@@ -358,7 +378,7 @@ const Dashboard = () => {
                   </MenuItem>
                   {family.map((Data) => (
                     <MenuItem
-                      // key={students.email}
+                      key={Data.id}
                       value={Data.id}
                     >
                       {Data.name}
@@ -429,6 +449,18 @@ const Dashboard = () => {
                       label="Address"
                       onChange={(e) => setAddress(e.target.value)}
                     />
+                      <Grid container spacing={2}>
+                    {
+                      urls.length > 0 && 
+                      urls.map((url,i) =>
+                      <Grid item xs={6}>
+                        <img key={i} src={url} width={"100"} height={"100"}/>
+                        <IconButton aria-label="delete" color="error" onClick={()=>delImage(url)}>
+                          <Delete/>
+                        </IconButton>
+                      </Grid>
+                      )}
+                      </Grid>
                   </Box>
                 </Grid>
                 <Grid item xs={7}>
@@ -446,6 +478,7 @@ const Dashboard = () => {
 
                   <DropzoneArea
                     onChange={handleChangeImage}
+                    showPreviewsInDropzone={images.length>0?true:false}
                     // filesLimit={50}
                     // acceptedFiles={["image/jpeg", "image/png", "image/bmp"]}
                   />
@@ -482,7 +515,7 @@ const Dashboard = () => {
                 </button> */}
                 {famData === "AddNewFamily" ? (
                   <button className="btn btn-primary" disabled={loading} onClick={SavaMyData}>
-                    {loading?<CircularProgress size={24}/>:"Save"}
+                    {loading?<CircularProgress size={24} color='error'/>:"Save"}
                   </button>
                 ) : null}
                 &nbsp;
