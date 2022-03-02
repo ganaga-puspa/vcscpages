@@ -1,10 +1,21 @@
 {
-  "hosting": {
+  "hosting": [
+    {
     "public": "build",
+    "target":"dev",
     "ignore": [
       "firebase.json",
       "**/.*",
       "**/node_modules/**"
     ]
-  }
+  },
+  {
+    "public": "build",
+    "target":"prod",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ]
+  }]
 }

@@ -1,5 +1,14 @@
 {
   "projects": {
     "default": "baboolsoft-church-project"
+  },
+  "targets": {
+    "baboolsoft-church-project": {
+      "hosting": {
+        "prod": [
+          "velankannisocial-families"
+        ]
+      }
+    }
   }
 }
