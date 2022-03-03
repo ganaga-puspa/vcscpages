@@ -1,12 +1,12 @@
 {
   "projects": {
-    "default": "baboolsoft-church-project"
+    "default": "velankannisocal-8290b"
   },
   "targets": {
-    "baboolsoft-church-project": {
+    "velankannisocal-8290b": {
       "hosting": {
-        "prod": [
-          "velankannisocial-families"
+        "family": [
+          "velankannisocal-family"
         ]
       }
     }

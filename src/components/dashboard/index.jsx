@@ -1,13 +1,8 @@
 import React, { useState } from "react";
-import CssBaseline from "@mui/material/CssBaseline";
 import Container from "@mui/material/Container";
 import Card from "@mui/material/Card";
-import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
-import Typography from "@mui/material/Typography";
-import { styled } from "@mui/material/styles";
 import TextField from "@mui/material/TextField";
-import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Grid";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
@@ -17,8 +12,6 @@ import CKEditor from "react-ckeditor-component";
 import axios from "axios";
 import Box from "@mui/material/Box";
 import { DropzoneArea } from "material-ui-dropzone";
-import Button from "@mui/material/Button";
-import SaveIcon from "@mui/icons-material/Save";
 import Swal from "sweetalert2";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
@@ -28,28 +21,20 @@ import { storage, db } from "../../firebase";
 import {
   collection,
   doc,
-  setDoc,
-  getDoc,
   onSnapshot,
   deleteDoc,
-  serverTimestamp,
-  query,
-  orderBy,
   updateDoc,
-  where,
   addDoc,
 } from "firebase/firestore";
 import {
   ref,
-  uploadBytes,
-  listAll,
   uploadBytesResumable,
   getDownloadURL,
 } from "firebase/storage";
 import LinearProgress from "@mui/material/LinearProgress";
 import { Delete } from "@mui/icons-material";
-
-function TabPanel(props) {
+import Presists from "./Presists";
+export function TabPanel(props) {
   const { children, value, index, ...other } = props;
 
   return (
@@ -86,6 +71,7 @@ const Dashboard = () => {
   const [images, setImages] = useState([]);
   const [urls, setUrls] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [updateLoader, setupdateLoader] = useState(false);
 
   const SubmitValue = async () => {
     const data = new FormData();
@@ -222,6 +208,7 @@ const Dashboard = () => {
         confirmButtonText: "OK",
       });
     } else {
+      setupdateLoader(true)
       const found = family.find(fam => fam.id === famData)
       const {img} = found
       const Familyid = famData;
@@ -282,14 +269,20 @@ const Dashboard = () => {
   
     if(images.length===0){
       setLoading(false)
+      setupdateLoader(false)
       clearState()
-      return Swal.fire('Success!',"Data Saved SuccesFully",'success')
+      return Swal.fire({
+        title: "Saved!",
+        text: "Data was Saved successfully!",
+        icon: "success",
+        confirmButtonText: "ok",
+      }).then(()=>window.location.reload())
     }
     
     const uploadPromises = []
 
     images.map((image, index) => {
-      const storageRef = ref(storage, "images/" + `${image.name}`);
+      const storageRef = ref(storage, "families/" + `${image.name}`);
       const uploadTask = uploadBytesResumable(storageRef, image);
       
       //   const uploadTask = storage.ref(`images/${image.name}`).put(image);
@@ -309,7 +302,7 @@ const Dashboard = () => {
     .then(res =>{
       const promises = [];
       images.map(image =>{
-        const downloader = getDownloadURL(ref(storage, `images/${image.name}`))
+        const downloader = getDownloadURL(ref(storage, `families/${image.name}`))
         promises.push(downloader)
       })
       Promise.all(promises)
@@ -325,13 +318,17 @@ const Dashboard = () => {
         })
         .then(()=>{
           setLoading(false)
+          setupdateLoader(false)
           clearState()
+          window.location.reload()
         })
         setLoading(false)
+        setupdateLoader(false)
       })
       .catch((err) => {
         console.log(err)
         setLoading(false)
+        setupdateLoader(false)
       });
     })
    
@@ -357,7 +354,8 @@ const Dashboard = () => {
               onChange={handleTabChange}
               variant="fullWidth"
             >
-              <Tab label="EDITOR" />
+              <Tab label="Families" />
+              <Tab label="Presists" />
               <Tab label="JSON" />
             </Tabs>
 
@@ -519,8 +517,8 @@ const Dashboard = () => {
                   </button>
                 ) : null}
                 &nbsp;
-                <button className="btn btn-primary" onClick={editFamily}>
-                  Update
+                <button className="btn btn-primary" disabled={updateLoader} onClick={editFamily}>
+                {updateLoader?<CircularProgress size={24} color='error'/>:"Update"}
                 </button>
                 &nbsp;
                 <button
@@ -536,6 +534,9 @@ const Dashboard = () => {
               </div>
             </TabPanel>
             <TabPanel value={tabvalue} index={1}>
+              <Presists tabValue={tabvalue}/>
+            </TabPanel>
+            <TabPanel value={tabvalue} index={2}>
               <Grid container spacing={2}>
                 <Grid item xs={12}>
                   <ReactJson src={families} theme="tomorrow" />

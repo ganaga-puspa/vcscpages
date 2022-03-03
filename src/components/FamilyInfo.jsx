@@ -46,21 +46,21 @@ function FamilyInfo({ family }) {
             <h2 class="texts">Contact Info:</h2>
             <h3 class="mob">
               Mobile :{" "}
-              <a href={`tel://${family && family.mobile}`}>
+              {/* <a href={`tel://${family && family.mobile}`}> */}
                 <Button startIcon={<CallIcon />} variant="outlined">
                   {family && family.mobile}
                 </Button>
-              </a>
+              {/* </a> */}
             </h3>
             <h6 class="emal">
               Email :{" "}
-              <a href={`mailto:${family && family.email}`}>
+              {/* <a href={`mailto:${family && family.email}`}> */}
                 <Button startIcon={<MailIcon />} variant="outlined">
                   {family && family.email}
                 </Button>
-              </a>
+              {/* </a> */}
             </h6>
-            <h6 class="reaach">Reach out us :</h6>
+            <h6 class="emal">Address :</h6>
             <Container>
               <h5 class="reaachpara">{family && family.address}</h5>
             </Container>
