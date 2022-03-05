@@ -69,6 +69,7 @@ const Dashboard = () => {
   const [famData, setFamData] = useState("AddNewFamily");
   const [progress, setProgress] = useState(0);
   const [images, setImages] = useState([]);
+  const [priestData, setPriestData] = useState([]);
   const [urls, setUrls] = useState([]);
   const [loading, setLoading] = useState(false);
   const [updateLoader, setupdateLoader] = useState(false);
@@ -239,18 +240,24 @@ const Dashboard = () => {
 
   React.useEffect(() => {
     const famRef = collection(db, "Family");
+    const priesRef = collection(db, "Presists");
 
     onSnapshot(famRef, (snapshot) => {
       let famdata = [];
       snapshot.docs.forEach((doc) => {
         famdata.push({ ...doc.data(), id: doc.id });
       });
-      // console.log("userdata", famdata);
+     
       setfamilies(famdata);
       setFamily(famdata);
-      // setCheck(q);
-
-      // console.log("famdata", famdata);
+      
+    });
+    onSnapshot(priesRef, (snapshot) => {
+      let famdata = [];
+      snapshot.docs.forEach((doc) => {
+        famdata.push({ ...doc.data(), id: doc.id });
+      });
+      setPriestData(famdata)
     });
   }, []);
 
@@ -355,7 +362,7 @@ const Dashboard = () => {
               variant="fullWidth"
             >
               <Tab label="Families" />
-              <Tab label="Presists" />
+              <Tab label="Priests" />
               <Tab label="JSON" />
             </Tabs>
 
@@ -480,6 +487,7 @@ const Dashboard = () => {
                     // filesLimit={50}
                     // acceptedFiles={["image/jpeg", "image/png", "image/bmp"]}
                   />
+                  <p style={{marginTop:'10px',color:'red'}}>Note: <span>Use Images with 868px X 406px resolution</span></p>
                   <br></br>
                   {progress !== 0 && <>
                   <h5 style={{ color: "#f73164", fontStyle: "italic" }}>
@@ -515,8 +523,9 @@ const Dashboard = () => {
                   <button className="btn btn-primary" disabled={loading} onClick={SavaMyData}>
                     {loading?<CircularProgress size={24} color='error'/>:"Save"}
                   </button>
-                ) : null}
-                &nbsp;
+                ) :
+                
+                <>
                 <button className="btn btn-primary" disabled={updateLoader} onClick={editFamily}>
                 {updateLoader?<CircularProgress size={24} color='error'/>:"Update"}
                 </button>
@@ -528,8 +537,9 @@ const Dashboard = () => {
                 >
                   Delete
                 </button>
+                </>
+                }
                 &nbsp;
-                
                 
               </div>
             </TabPanel>
@@ -539,7 +549,7 @@ const Dashboard = () => {
             <TabPanel value={tabvalue} index={2}>
               <Grid container spacing={2}>
                 <Grid item xs={12}>
-                  <ReactJson src={families} theme="tomorrow" />
+                  <ReactJson src={{families,priests:priestData}} theme="tomorrow" />
                 </Grid>
               </Grid>
             </TabPanel>

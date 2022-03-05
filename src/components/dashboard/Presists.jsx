@@ -405,6 +405,7 @@ const Presists = () => {
                     // filesLimit={50}
                     // acceptedFiles={["image/jpeg", "image/png", "image/bmp"]}
                   />
+                  <p style={{marginTop:'10px',color:'red'}}>Note: <span>Use Images with 868px X 406px resolution</span></p>
                   <br></br>
                   {progress !== 0 && <>
                   <h5 style={{ color: "#f73164", fontStyle: "italic" }}>
@@ -440,7 +441,8 @@ const Presists = () => {
                   <button className="btn btn-primary" disabled={loading} onClick={SavaMyData}>
                     {loading?<CircularProgress size={24} color='error'/>:"Save"}
                   </button>
-                ) : null}
+                ) : 
+                <>
                 &nbsp;
                 <button className="btn btn-primary" disabled={updateLoader} onClick={editFamily}>
                 {updateLoader?<CircularProgress size={24} color='error'/>:"Update"}
@@ -454,7 +456,7 @@ const Presists = () => {
                   Delete
                 </button>
                 &nbsp;
-                
+                </>}
                 
               </div>
             </>
