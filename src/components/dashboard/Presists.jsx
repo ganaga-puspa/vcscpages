@@ -41,6 +41,7 @@ const Presists = () => {
     const [email, setEmail] = useState("");
     const [address, setAddress] = useState("");
     const [name, setName] = useState("");
+    const [order, setOrder] = useState("");
     const [filedata, setFile] = useState();
     const [tabvalue, setTabValue] = useState(0);
     const [families, setfamilies] = React.useState([]);
@@ -53,18 +54,6 @@ const Presists = () => {
     const [updateLoader, setupdateLoader] = useState(false);
 
     const SavaMyData = async () => {
-    
-        if (
-          content === "" ||
-          FaceBook === "" ||
-          YouTube === "" ||
-          ContactInfo === "" ||
-          email === "" ||
-          address === "" ||
-          name === ""
-        ){
-          return Swal.fire('Oops!','Please Fillout All fields','error')
-        }
         setLoading(true)
         const docRef = await addDoc(collection(db,'Presists'),{
                         name: name,
@@ -75,6 +64,7 @@ const Presists = () => {
                         email: email,
                         address: address,
                         img: [],
+                        order
                       })
         handleUpload(docRef.id,[])
         
@@ -88,6 +78,7 @@ const Presists = () => {
         setYouTube("");
         setAddress("");
         setContactInfo("");
+        setOrder('')
         setUrls([])
         setFamData('AddNewPresist')
       }
@@ -106,6 +97,7 @@ const Presists = () => {
           setAddress(select.address);
           setContactInfo(select.mobile);
           setUrls(select.img)
+          setOrder(select.order)
           setImages([])
           // setActive(true);
           // console.log("select", select);
@@ -163,6 +155,7 @@ const Presists = () => {
             email: email,
             address: address,
             img: [...img],
+            order
           }).then(()=>{
               handleUpload(Familyid,img)
           }
@@ -307,6 +300,26 @@ const Presists = () => {
                       {Data.name}
                     </MenuItem>
                   ))}
+                </Select>
+              </FormControl>
+              <br/>
+              <br/>
+              <FormControl fullWidth>
+                <InputLabel id="demo-simple-select-label">
+                  Order of a Priest
+                </InputLabel>
+                <Select
+                onChange={(e)=>setOrder(e.target.value)}
+                value={order}
+                label="Please select the order family">
+                  {family.map((data,i) =>(
+                    <MenuItem key={i} value={i+1}>
+                      {i+1}
+                    </MenuItem>
+                  ))}
+                  <MenuItem>
+                      {family.length+1}
+                    </MenuItem>
                 </Select>
               </FormControl>
               <br /> <br />

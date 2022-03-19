@@ -116,8 +116,9 @@ export default function AppContainer(props) {
         famdata.push({ ...doc.data(), id: doc.id });
       });
       console.log("userdata", famdata);
-      setfamilies(famdata);
-      setFamily(famdata[0]);
+      const ordered = famdata.sort((a,b)=> a.order-b.order)
+      setfamilies(ordered);
+      setFamily(ordered[0]);
       // setOpen(open);
     });
     // axios.get("https://dev.dnshko.in/api/users.json").then((res) => {
@@ -188,18 +189,18 @@ export default function AppContainer(props) {
           <Button
             class="bttnspacing"
             variant="contained"
-            color="secondary"
-            onClick={() => setRenderPortrait(true)}
-          >
-            Family Portrait
-          </Button>
-          <Button
-            variant="contained"
             color="primary"
             onClick={() => setRenderPortrait(false)}
           >
             Family Info
           </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => setRenderPortrait(true)}
+          >
+            Family Portrait
+          </Button> 
         </div>
       </Box>
     </Box>
